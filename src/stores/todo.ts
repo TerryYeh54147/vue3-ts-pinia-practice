@@ -1,27 +1,27 @@
 import { defineStore } from 'pinia';
-import { Status, Todo } from 'components/models';
+import { Status, TodoList } from 'src/models/todo';
 import { reactive } from 'vue';
 
 export const useTodoStore = defineStore('todo', {
   state: () => ({
-    todo: reactive<Array<Todo>>([
+    todoList: reactive<TodoList>({
       // temp for test
-      {
+      'not yet': [{
         id: '1',
         content: 'todo 1',
         status: Status['not yet'],
-      },
-      {
+      }],
+      'doing': [{
         id: '2',
         content: 'todo 2',
         status: Status.doing,
-      },
-      {
+      }],
+      'done': [{
         id: '3',
         content: 'todo 3',
         status: Status.done,
-      },
-    ]),
+      }],
+    }),
     status: [
       {
         label: 'not yet',
@@ -47,8 +47,8 @@ export const useTodoStore = defineStore('todo', {
   getters: {},
 
   actions: {
-    setTodo(e: Array<Todo>) {
-      this.todo = e;
+    setTodo(e: TodoList) {
+      this.todoList = e;
     }
   }
 });

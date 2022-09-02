@@ -1,38 +1,60 @@
 <template>
   <q-page padding>
-    <q-card>
-      <q-card-section>
-        <q-list separator>
-          <q-item v-for="item in todos" :key="item.id" clickable v-ripple>
-            <TodoItem :item="item" @del="del" />
-          </q-item>
-        </q-list>
-      </q-card-section> </q-card
-    ><q-page-sticky position="bottom-right" :offset="[18, 18]">
+    <div class="row q-gutter-md">
+      <!-- TODO: make the following part to be a view components -->
+      <div
+        class="col"
+        v-for="(tag, idx) in statusTags"
+        :key="`statusTags: ${idx}`"
+      >
+        <q-card>
+          <q-card-section>
+            <q-chip
+              ><q-avatar :icon="getIcon(tag)" :color="getIconColor(tag)" />{{
+                tag
+              }}</q-chip
+            >
+            <q-list separator>
+              <q-item
+                v-for="item in todoList[tag]"
+                :key="item.id"
+                clickable
+                v-ripple
+                @click="openDialog(DialogMode.edit, item)"
+              >
+                <TodoItem :item="item" @del="del(tag, $event)" />
+              </q-item>
+            </q-list>
+          </q-card-section>
+        </q-card>
+      </div>
+    </div>
+    <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-btn
         fab
         icon="add"
         color="secondary"
-        @click="openDialog(DialogMode.add)"
+        @click="openDialog(DialogMode.add, defaultTodo)"
       /> </q-page-sticky
   ></q-page>
   <ItemDialog
     :key="dialog.key"
     :is-open="dialog.isOpen"
     :mode="dialog.mode"
+    :data="dialog.input"
     @close="dialog.isOpen = !dialog.isOpen"
     @submit="updateTodos(dialog.mode, $event)"
   />
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { reactive, computed } from 'vue';
 import { useTodoStore } from 'src/stores/todo';
 import _ from 'lodash';
 import { useQuasar } from 'quasar';
 
-import type { Todo, InputDialogProps } from 'components/models';
-import { DialogMode } from 'components/models';
+import { TodoList, Todo, Status } from 'src/models/todo';
+import { DialogMode, InputDialogProps } from 'src/models/dialog';
 import TodoItem from 'components/todo/TodoItem.vue';
 import ItemDialog from 'components/todo/ItemDialog.vue';
 
@@ -41,37 +63,80 @@ import { onBeforeRouteLeave } from 'vue-router';
 const $q = useQuasar();
 
 const store = useTodoStore();
+
+const defaultTodo = {
+  id: '',
+  content: '',
+  status: Status['not yet'],
+};
 const dialog = reactive<InputDialogProps>({
   key: 0,
   isOpen: false,
   mode: DialogMode.others,
+  input: defaultTodo,
 });
 
-let todos = reactive<Array<Todo>>(_.cloneDeep(store.todo));
+let todoList = reactive<TodoList>(_.cloneDeep(store.todoList));
+const statusTags = computed(() => Object.keys(todoList));
+const statusMapping = computed(() => store.status);
 
-const openDialog = (mode: DialogMode) => {
+const openDialog = (mode: DialogMode, data: Todo) => {
   dialog.key++;
   dialog.isOpen = true;
   dialog.mode = mode;
-};
-
-// test
-const updateTodos = (mode: DialogMode, data: Todo) => {
-  console.log('updateTodos');
-  console.log(mode);
-  console.log(data);
   if (mode === DialogMode.add) {
-    todos.push(data);
+    dialog.input = defaultTodo;
   } else if (mode === DialogMode.edit) {
-    console.warn('no support this function yet');
-  } else {
-    console.error('unexpected mode');
+    dialog.input = data;
   }
 };
 
-const del = (id: string) => {
-  const targetIdx = todos.findIndex((e) => e.id === id);
-  todos.splice(targetIdx, 1);
+const getIcon = (key: string) => {
+  return (
+    statusMapping.value.find((e) => key === e.label)?.icon ?? 'question_mark'
+  );
+};
+const getIconColor = (key: string) => {
+  return statusMapping.value.find((e) => key === e.label)?.color ?? 'grey';
+};
+const getStatusString = (statusIdx: number): string =>
+  statusMapping.value[statusIdx].label;
+const isInStatusTypeRange = (statusIdx: number): boolean => {
+  return statusIdx >= 0 && statusIdx < statusMapping.value.length;
+};
+
+const updateTodos = (mode: DialogMode, data: Todo) => {
+  const statusTag = getStatusString(data.status);
+  const targetArr = todoList[statusTag];
+  if (mode === DialogMode.add) {
+    console.log('---add item---');
+    targetArr.push(data);
+  } else if (mode === DialogMode.edit) {
+    let targetIdx = targetArr.findIndex((e) => e.id === data.id);
+    console.log('---edit item---');
+    if (targetIdx >= 0) {
+      todoList[statusTag][targetIdx] = data;
+    } else {
+      todoList[statusTag].push(data);
+      if (
+        _.isNumber(data.originStatusTag) &&
+        isInStatusTypeRange(data.originStatusTag)
+      ) {
+        const originTag: number = data.originStatusTag;
+        const originStatusTag = getStatusString(originTag);
+        del(originStatusTag, data.id);
+      }
+    }
+  } else {
+    console.error('unexpected mode');
+  }
+  console.log(data);
+};
+
+const del = (statusTag: string, id: string) => {
+  console.log(`del item: ${id}`);
+  const targetIdx = todoList[statusTag].findIndex((e) => e.id === id);
+  todoList[statusTag].splice(targetIdx, 1);
 };
 
 const saveCheckBeforeLeave = () => {
@@ -82,7 +147,7 @@ const saveCheckBeforeLeave = () => {
         label: '存檔',
         color: 'positive',
         handler: () => {
-          store.setTodo(todos);
+          store.setTodo(todoList);
           console.log('save current todo list');
         },
       },
@@ -98,8 +163,7 @@ const saveCheckBeforeLeave = () => {
 };
 
 onBeforeRouteLeave(() => {
-  console.log('onBeforeRouteLeave');
+  console.log('onBeforeRouteLeave: TodoPage');
   saveCheckBeforeLeave();
-  // return true;
 });
 </script>

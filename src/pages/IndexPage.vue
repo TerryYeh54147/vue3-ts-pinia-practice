@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue';
-import { ConfirmDialogProps } from 'src/components/models';
+import { ConfirmDialogProps } from 'src/models/dialog';
 import ConfirmDialog from 'components/ConfirmDialog.vue';
 
 const dialog = reactive<ConfirmDialogProps>({
@@ -29,7 +29,8 @@ const test = () => {
   dialog.key++;
   dialog.isOpen = true;
   dialog.title = 'Test';
-  dialog.content = 'Test content\njasiofajs;difasjfiaos;dnfansjkdvnsnfdoi;aoisdfjiajdsoi;fjao;jsdoifjaoi;sjdoasoinfkadhoi;navdsfjkdihvnhoindfsjk09asjoi;dnlkf;iaosnlkdfialnkfaoi;sdlk';
+  dialog.content =
+    'Test content\njasiofajs;difasjfiaos;dnfansjkdvnsnfdoi;aoisdfjiajdsoi;fjao;jsdoifjaoi;sjdoasoinfkadhoi;navdsfjkdihvnhoindfsjk09asjoi;dnlkf;iaosnlkdfialnkfaoi;sdlk';
 };
 
 const action = (val: boolean) => {
