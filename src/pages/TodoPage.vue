@@ -9,7 +9,7 @@
       >
         <q-card>
           <q-card-section>
-            <q-chip
+            <q-chip clickable @click="openDialog(DialogMode.add, {...defaultTodo, ...{status: idx}})"
               ><q-avatar :icon="getIcon(tag)" :color="getIconColor(tag)" />{{
                 tag
               }}</q-chip
@@ -59,7 +59,7 @@ import TodoItem from 'components/todo/TodoItem.vue';
 import ItemDialog from 'components/todo/ItemDialog.vue';
 
 import { onBeforeRouteLeave } from 'vue-router';
-
+const test = () => console.log('test click');
 const $q = useQuasar();
 
 const store = useTodoStore();
@@ -80,15 +80,11 @@ let todoList = reactive<TodoList>(_.cloneDeep(store.todoList));
 const statusTags = computed(() => Object.keys(todoList));
 const statusMapping = computed(() => store.status);
 
-const openDialog = (mode: DialogMode, data: Todo) => {
+const openDialog = (mode: DialogMode, data: Todo = defaultTodo) => {
   dialog.key++;
   dialog.isOpen = true;
   dialog.mode = mode;
-  if (mode === DialogMode.add) {
-    dialog.input = defaultTodo;
-  } else if (mode === DialogMode.edit) {
-    dialog.input = data;
-  }
+  dialog.input = data;
 };
 
 const getIcon = (key: string) => {
