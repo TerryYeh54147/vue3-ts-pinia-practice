@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue';
-import { ConfirmDialogProps } from 'src/models/dialog';
+import { ConfirmDialogProps } from '../models/dialog';
 import ConfirmDialog from 'components/ConfirmDialog.vue';
 
 const dialog = reactive<ConfirmDialogProps>({

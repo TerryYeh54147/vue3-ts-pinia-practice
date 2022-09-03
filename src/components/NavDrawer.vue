@@ -32,6 +32,10 @@ const drawerItems = reactive<Array<Drawer>>([
     title: 'Home',
     path: '/',
     icon: 'home',
+  },{
+    title: 'ML',
+    path: '/ml-platform',
+    icon: 'model_training',
   },
 ]);
 </script>
