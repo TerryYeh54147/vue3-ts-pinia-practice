@@ -1,7 +1,7 @@
 <template>
   <div class="row q-col-gutter-md">
     <div v-for="(layer, idx) in layers" :key="`Layer_${idx}`" class="col-4">
-        <LayerCard :title="layer.label" />
+      <LayerCard :title="`Layer${idx}`" :data="layer" @del="del" />
     </div>
   </div>
   <q-page-sticky position="bottom-right" :offset="[10, 10]">
@@ -17,7 +17,8 @@ import { Layer } from '@/models/model';
 const layers = reactive<Array<Layer>>([]);
 let globalCnt = ref(0);
 const getNextId = () => {
-  return globalCnt.value++;
+  globalCnt.value++;
+  return globalCnt.value.toString();
 };
 
 const add = () => {
@@ -28,5 +29,12 @@ const add = () => {
   };
   console.log('add');
   layers.push(newItem);
+};
+
+const del = (id: string) => {
+  const targetIdx = layers.findIndex((e) => e.id === id);
+  layers.splice(targetIdx, 1);
+  console.log(`--- remove id: ${id} from layers---`);
+  console.log(layers);
 };
 </script>
