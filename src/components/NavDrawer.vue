@@ -33,7 +33,7 @@ const drawerItems = reactive<Array<Drawer>>([
     path: '/',
     icon: 'home',
   },{
-    title: 'ML',
+    title: 'ML Platform',
     path: '/ml-platform',
     icon: 'model_training',
   },
