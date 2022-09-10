@@ -20,6 +20,7 @@
             label="class"
             :options="Object.keys(kerasAPI)"
             clearable
+            @update:model-value="update('class')"
           />
         </div>
       </div>
@@ -54,7 +55,7 @@
             :hint="param['hint']"
             clearable
             class="q-mr-md"
-            @change="update(param['label'])"
+            @update:model-value="update(param['label'])"
           ></q-select>
         </div>
       </div>
@@ -85,6 +86,9 @@ let input = reactive<Layer>(_.cloneDeep(props.data) as Layer);
 
 const update = (label: string) => {
   console.log(`update: ${label} field`);
+  if (label === 'class') {
+    input.params = {};
+  }
   emit('update', input);
 };
 const del = () => {

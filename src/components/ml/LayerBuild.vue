@@ -15,8 +15,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { uid } from 'quasar';
+import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
+import { uid, useQuasar } from 'quasar';
 import LayerCard from './LayerCard.vue';
 import { Layer } from '../../models/model';
 import { useModelLayerStore } from '../../stores/model-layer-store';
@@ -49,14 +49,14 @@ const add = () => {
   console.log('=== add ===');
   layers.push(newItem);
   console.log(layers);
-  modelLayerStore.syncLayer(layers);
-  console.log(JSON.stringify(modelLayerStore.modelLayerInputed));
+  // modelLayerStore.syncLayer(layers);
+  // console.log(JSON.stringify(modelLayerStore.modelLayerInputed));
 };
 
 const update = (newItem: Layer) => {
   const targetIdx = layers.findIndex((e) => e.id === newItem.id);
   layers[targetIdx] = newItem;
-  modelLayerStore.syncLayer(layers);
+  // modelLayerStore.syncLayer(layers);
 };
 
 const del = (id: string) => {
@@ -64,6 +64,33 @@ const del = (id: string) => {
   layers.splice(targetIdx, 1);
   console.log(`--- remove id: ${id} from layers---`);
   console.log(layers);
-  modelLayerStore.syncLayer(layers);
 };
+
+onBeforeUnmount(() => {
+  console.log('onBeforeMount');
+  useQuasar().notify({
+    message: '需要暫存 Model Layers 嗎？',
+    color: 'black',
+    actions: [
+      {
+        label: '儲存',
+        color: 'positive',
+        handler: () => {
+          modelLayerStore.syncLayer(layers);
+        },
+      },
+      {
+        label: '清除',
+        color: 'negative',
+        handler: () => {
+          console.log('initial model layers');
+          layers = _.cloneDeep(
+            modelLayerStore.modelLayerDefaultInputed.modelLayer
+          );
+          modelLayerStore.syncLayer(layers);
+        },
+      },
+    ],
+  });
+});
 </script>
