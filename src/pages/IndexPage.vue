@@ -1,7 +1,16 @@
 <template>
-  <q-page class="row items-center justify-evenly">
-    Index home
-    <q-btn @click="test">test confirm dialog</q-btn>
+  <q-page class="items-center justify-evenly row q-gutter-md">
+    <div class="row">
+      <div class="col">Index home</div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <q-btn @click="test">test confirm dialog</q-btn>
+      </div>
+      <div class="col">
+        <FileUploader />
+      </div>
+    </div>
   </q-page>
   <confirm-dialog
     :key="dialog.key"
@@ -17,6 +26,7 @@
 import { reactive } from 'vue';
 import { ConfirmDialogProps } from '../models/dialog';
 import ConfirmDialog from 'components/ConfirmDialog.vue';
+import FileUploader from 'components/FileUploader.vue';
 
 const dialog = reactive<ConfirmDialogProps>({
   key: 0,
