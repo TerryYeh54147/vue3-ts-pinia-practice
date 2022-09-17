@@ -23,7 +23,7 @@
       :columns="previewHeaders"
       :rows="previewData"
       :row-key="previewHeaders[0].name"
-      table-style="width: 500px"
+      table-style="max-width: 1000px"
     ></q-table>
   </div>
 </template>
