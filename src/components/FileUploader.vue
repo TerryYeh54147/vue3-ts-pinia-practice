@@ -1,5 +1,5 @@
 <template>
-  <div class="q-gutter-md items-center">
+  <div class="q-gutter-lg items-center">
     <q-file
       v-model="file"
       label="Pick files"
@@ -15,7 +15,7 @@
       </template>
     </q-file>
   </div>
-  <div class="q-gutter-lg items-center">
+  <div class="q-my-md tems-center">
     <q-table
       v-if="!_.isEmpty(previewHeaders)"
       :title="`Preview ${fileName}`"
@@ -23,6 +23,7 @@
       :columns="previewHeaders"
       :rows="previewData"
       :row-key="previewHeaders[0].name"
+      table-style="width: 500px"
     ></q-table>
   </div>
 </template>
@@ -37,6 +38,7 @@ let isLoading = ref(false);
 let fileName = ref('');
 
 const previewFile = () => {
+  initialPreviewData();
   const reader = new FileReader();
   // using array buffer to instead of read as text
   // because read as text will load whole file to memory first, it will crush your memory if file size too large
