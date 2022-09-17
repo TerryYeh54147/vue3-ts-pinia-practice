@@ -23,7 +23,7 @@
       :columns="previewHeaders"
       :rows="previewData"
       :row-key="previewHeaders[0].name"
-      table-style="max-width: 1000px"
+      :pagination="paginationSetup"
     ></q-table>
   </div>
 </template>
@@ -36,7 +36,6 @@ import { PreviewTableHeader } from '../models/file-upload';
 const file = ref(null);
 let isLoading = ref(false);
 let fileName = ref('');
-
 const previewFile = () => {
   initialPreviewData();
   const reader = new FileReader();
@@ -56,9 +55,11 @@ const previewFile = () => {
   };
 };
 
+const paginationSetup = {
+  rowsPerPage: 10,
+}
 let previewHeaders = reactive<Array<PreviewTableHeader>>([]);
 let previewData = reactive([]);
-
 const txtToTableData = (txt: string) => {
   const stringRows = txt.split('\n');
   const firstRow = stringRows.shift() as string;
@@ -70,7 +71,6 @@ const initialPreviewData = () => {
   previewHeaders.length = 0;
   previewData.length = 0;
 };
-
 const setTableHeader = (txt: string, header: Array<PreviewTableHeader>) => {
   return txt.split(',').reduce((res: Array<PreviewTableHeader>, e) => {
     const obj: PreviewTableHeader = {
@@ -83,7 +83,6 @@ const setTableHeader = (txt: string, header: Array<PreviewTableHeader>) => {
     return res;
   }, header);
 };
-
 const setTableData = (stringRows: Array<string>, dataset: never[]) => {
   stringRows.reduce((res, str: string) => {
     if (str.length > 0) {
