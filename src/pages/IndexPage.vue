@@ -1,12 +1,12 @@
 <template>
   <q-page class="items-center justify-evenly row q-gutter-md">
-    <div class="row">
+    <!-- <div class="row">
       <div class="col">Index home</div>
-    </div>
+    </div> -->
     <div class="row">
-      <div class="col">
+      <!-- <div class="col">
         <q-btn @click="test">test confirm dialog</q-btn>
-      </div>
+      </div> -->
       <div class="col">
         <FileUploader />
       </div>
