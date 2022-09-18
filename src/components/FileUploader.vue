@@ -29,11 +29,16 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { reactive, ref, onDeactivated } from 'vue';
 import _ from 'lodash';
 import { PreviewTableHeader } from '../models/file-upload';
 
-const file = ref(null);
+const props = defineProps({
+  data: null,
+});
+
+// const file = ref(null);
+const file = ref(_.cloneDeep(props.data));
 let isLoading = ref(false);
 let fileName = ref('');
 const previewFile = () => {
@@ -57,7 +62,7 @@ const previewFile = () => {
 
 const paginationSetup = {
   rowsPerPage: 10,
-}
+};
 let previewHeaders = reactive<Array<PreviewTableHeader>>([]);
 let previewData = reactive([]);
 const txtToTableData = (txt: string) => {
@@ -104,4 +109,10 @@ const setTableData = (stringRows: Array<string>, dataset: never[]) => {
     return res;
   }, dataset);
 };
+
+const emit = defineEmits(['update']);
+onDeactivated(() => {
+  console.log('onDeactivated');
+  emit('update', file.value);
+});
 </script>

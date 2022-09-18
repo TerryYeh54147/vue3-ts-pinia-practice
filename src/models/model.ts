@@ -3,6 +3,11 @@ export enum InputType {
   'text',
 }
 
+export interface EnvSetting {
+  framework: string;
+  isPretrained: boolean;
+}
+
 export interface Layer {
   id: string,
   label: string,
@@ -10,12 +15,19 @@ export interface Layer {
   params: object,
 }
 
+export interface modelSelected {
+  uid: string,
+  envSetting: EnvSetting,
+  file: null, //TODO: check does it work
+  modelLayer: Array<Layer>
+}
+
 export interface layerParams {
   (key: string): string;
 }
 
 // waiting for use
-export interface KerasAPILayerParams{
+export interface KerasAPILayerParams {
   label: string,
   inputType: InputType,
   options?: Array<string>,

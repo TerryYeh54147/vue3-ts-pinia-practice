@@ -1,14 +1,19 @@
 import { defineStore } from 'pinia';
 import { InputType, Layer } from '../models/model'
+import _ from 'lodash';
 
 export const useModelLayerStore = defineStore('modelLayer', {
   state: () => ({
     modelLayerDefaultInputed: {
       uid: '',
+      envSetting: { framework: '', isPretrained: false },
+      file: null,
       modelLayer: [],
     },
     modelLayerInputed: {
       uid: '',
+      envSetting: { framework: '', isPretrained: true },
+      file: null,
       modelLayer: [] as Array<Layer>,
     },
     kerasAPI: {
@@ -109,6 +114,12 @@ export const useModelLayerStore = defineStore('modelLayer', {
     syncLayer(layers: Array<Layer>) {
       this.modelLayerInputed.modelLayer = layers;
       console.log('=== sync layers ===');
+      console.log(this.modelLayerInputed);
+    },
+    syncLayerModelLayerInputed(data) {
+      console.log(data);
+      this.modelLayerInputed = { ...this.modelLayerInputed, ..._.cloneDeep(data) };
+      console.log('=== sync modelLayerInputed ===');
       console.log(this.modelLayerInputed);
     },
   },

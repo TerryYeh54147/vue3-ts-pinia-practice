@@ -15,22 +15,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
-import { uid, useQuasar } from 'quasar';
+import { ref, reactive, onDeactivated } from 'vue';
+// import { useQuasar } from 'quasar';
 import LayerCard from './LayerCard.vue';
 import { Layer } from '../../models/model';
-import { useModelLayerStore } from '../../stores/model-layer-store';
+// import { useModelLayerStore } from '../../stores/model-layer-store';
 import _ from 'lodash';
 
-const modelLayerStore = useModelLayerStore();
-let layers = reactive<Array<Layer>>(
-  _.cloneDeep(modelLayerStore.modelLayerInputed.modelLayer)
-);
-
-onMounted(() => {
-  const id = uid();
-  modelLayerStore.modelLayerInputed.uid = id;
+const props = defineProps({
+  data: Array,
 });
+
+// const modelLayerStore = useModelLayerStore();
+// let layers = reactive<Array<Layer>>(
+//   _.cloneDeep(modelLayerStore.modelLayerInputed.modelLayer)
+// );
+let layers = reactive<Array<Layer>>(_.cloneDeep(props.data) as unknown as Array<Layer>);
+
+// onMounted(() => {
+//   const id = uid();
+//   modelLayerStore.modelLayerInputed.uid = id;
+// });
 let globalCnt = ref(0);
 
 const getNextId = () => {
@@ -66,31 +71,37 @@ const del = (id: string) => {
   console.log(layers);
 };
 
-onBeforeUnmount(() => {
-  console.log('onBeforeMount');
-  useQuasar().notify({
-    message: '需要暫存 Model Layers 嗎？',
-    color: 'black',
-    actions: [
-      {
-        label: '儲存',
-        color: 'positive',
-        handler: () => {
-          modelLayerStore.syncLayer(layers);
-        },
-      },
-      {
-        label: '清除',
-        color: 'negative',
-        handler: () => {
-          console.log('initial model layers');
-          layers = _.cloneDeep(
-            modelLayerStore.modelLayerDefaultInputed.modelLayer
-          );
-          modelLayerStore.syncLayer(layers);
-        },
-      },
-    ],
-  });
+const emit = defineEmits(['update']);
+onDeactivated(() => {
+  console.log('onDeactivated');
+  emit('update', layers);
 });
+
+// onBeforeUnmount(() => {
+//   console.log('onBeforeMount');
+//   useQuasar().notify({
+//     message: '需要暫存 Model Layers 嗎？',
+//     color: 'black',
+//     actions: [
+//       {
+//         label: '儲存',
+//         color: 'positive',
+//         handler: () => {
+//           modelLayerStore.syncLayer(layers);
+//         },
+//       },
+//       {
+//         label: '清除',
+//         color: 'negative',
+//         handler: () => {
+//           console.log('initial model layers');
+//           layers = _.cloneDeep(
+//             modelLayerStore.modelLayerDefaultInputed.modelLayer
+//           );
+//           modelLayerStore.syncLayer(layers);
+//         },
+//       },
+//     ],
+//   });
+// });
 </script>
