@@ -1,5 +1,6 @@
 <template>
   <div class="q-gutter-lg items-center">
+    <q-toggle v-model="needPreview" label="Preview Data" />
     <q-file
       v-model="file"
       label="Pick files"
@@ -15,9 +16,9 @@
       </template>
     </q-file>
   </div>
-  <div class="q-my-md tems-center">
+  <div class="q-my-md items-center">
     <q-table
-      v-if="!_.isEmpty(previewHeaders)"
+      v-if="needPreview && !_.isEmpty(previewHeaders)"
       :title="`Preview ${fileName}`"
       :loading="isLoading"
       :columns="previewHeaders"
@@ -59,7 +60,7 @@ const previewFile = () => {
     isLoading.value = false;
   };
 };
-
+let needPreview = ref(false);
 const paginationSetup = {
   rowsPerPage: 10,
 };

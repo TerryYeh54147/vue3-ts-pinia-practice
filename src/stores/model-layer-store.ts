@@ -12,7 +12,7 @@ export const useModelLayerStore = defineStore('modelLayer', {
     },
     modelLayerInputed: {
       uid: '',
-      envSetting: { framework: '', isPretrained: true },
+      envSetting: { framework: '', isPretrained: false },
       file: null,
       modelLayer: [] as Array<Layer>,
     },

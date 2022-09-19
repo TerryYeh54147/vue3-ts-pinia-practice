@@ -16,26 +16,18 @@
 
 <script setup lang="ts">
 import { ref, reactive, onDeactivated } from 'vue';
-// import { useQuasar } from 'quasar';
 import LayerCard from './LayerCard.vue';
 import { Layer } from '../../models/model';
-// import { useModelLayerStore } from '../../stores/model-layer-store';
 import _ from 'lodash';
 
 const props = defineProps({
   data: Array,
 });
 
-// const modelLayerStore = useModelLayerStore();
-// let layers = reactive<Array<Layer>>(
-//   _.cloneDeep(modelLayerStore.modelLayerInputed.modelLayer)
-// );
-let layers = reactive<Array<Layer>>(_.cloneDeep(props.data) as unknown as Array<Layer>);
+let layers = reactive<Array<Layer>>(
+  _.cloneDeep(props.data) as unknown as Array<Layer>
+);
 
-// onMounted(() => {
-//   const id = uid();
-//   modelLayerStore.modelLayerInputed.uid = id;
-// });
 let globalCnt = ref(0);
 
 const getNextId = () => {
@@ -53,15 +45,12 @@ const add = () => {
   };
   console.log('=== add ===');
   layers.push(newItem);
-  console.log(layers);
-  // modelLayerStore.syncLayer(layers);
-  // console.log(JSON.stringify(modelLayerStore.modelLayerInputed));
 };
 
 const update = (newItem: Layer) => {
   const targetIdx = layers.findIndex((e) => e.id === newItem.id);
   layers[targetIdx] = newItem;
-  // modelLayerStore.syncLayer(layers);
+  emit('update', layers);
 };
 
 const del = (id: string) => {
@@ -76,32 +65,4 @@ onDeactivated(() => {
   console.log('onDeactivated');
   emit('update', layers);
 });
-
-// onBeforeUnmount(() => {
-//   console.log('onBeforeMount');
-//   useQuasar().notify({
-//     message: '需要暫存 Model Layers 嗎？',
-//     color: 'black',
-//     actions: [
-//       {
-//         label: '儲存',
-//         color: 'positive',
-//         handler: () => {
-//           modelLayerStore.syncLayer(layers);
-//         },
-//       },
-//       {
-//         label: '清除',
-//         color: 'negative',
-//         handler: () => {
-//           console.log('initial model layers');
-//           layers = _.cloneDeep(
-//             modelLayerStore.modelLayerDefaultInputed.modelLayer
-//           );
-//           modelLayerStore.syncLayer(layers);
-//         },
-//       },
-//     ],
-//   });
-// });
 </script>
