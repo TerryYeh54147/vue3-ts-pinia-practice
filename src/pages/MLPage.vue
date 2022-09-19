@@ -20,6 +20,7 @@
         <component
           :is="step['component']"
           :data="step['data']"
+          :key="stepKey"
           @update="updateData($event, step['label'])"
         ></component>
       </q-step>
