@@ -19,6 +19,7 @@
             v-model="input.class"
             label="class"
             :options="Object.keys(kerasAPI)"
+            :rules="[isRequired]"
             clearable
             @update:model-value="update('class')"
           />
@@ -69,6 +70,7 @@ import _ from 'lodash';
 import { useModelLayerStore } from '../../stores/model-layer-store';
 import { isValidKey } from '../../utils/utils';
 import { InputType, Layer } from '../../models/model';
+import { isRequired } from '../../utils/rules';
 
 const modelLayerStore = useModelLayerStore();
 

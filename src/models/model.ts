@@ -3,7 +3,7 @@ export enum InputType {
   'text',
 }
 
-export interface EnvSetting {
+export interface EnvSetup {
   framework: string;
   isPretrained: boolean;
 }
@@ -17,7 +17,7 @@ export interface Layer {
 
 export interface modelSelected {
   uid: string,
-  envSetting: EnvSetting,
+  envSetting: EnvSetup,
   file: null, //TODO: check does it work
   modelLayer: Array<Layer>
 }

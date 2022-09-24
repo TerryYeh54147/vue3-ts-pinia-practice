@@ -1,64 +1,72 @@
 <template>
   <q-page padding>
-    <q-stepper
-      v-model="curStep"
-      ref="stepper"
-      color="primary"
-      animated
-      keep-alive
-      alternative-labels
-      :key="stepKey"
-    >
-      <q-step
-        v-for="(step, idx) in steps"
-        :key="`step_${idx}`"
-        :name="idx"
-        :title="step['title']"
-        :icon="step['icon'] ?? 'question_mark'"
-        :done="curStep > idx"
+    <q-form @submit="isFinalStep ? submit() : nextStep()" @reset="resetStep">
+      <q-stepper
+        v-model="curStep"
+        ref="stepper"
+        color="primary"
+        animated
+        keep-alive
+        alternative-labels
+        :key="stepKey"
       >
-        <component
-          :is="step['component']"
-          :data="step['data']"
-          :key="stepKey"
-          @update="updateData($event, step['label'])"
-        ></component>
-      </q-step>
-      <template #navigation>
-        <q-stepper-navigation>
-          <q-btn
-            @click="isFinalStep ? submit() : nextStep()"
-            color="primary"
-            :label="isFinalStep ? 'Submit' : 'Continue'"
-          />
-          <q-btn
-            v-if="curStep > 0"
-            flat
-            color="primary"
-            @click="backStep"
-            label="Back"
-            class="q-ml-sm"
-          />
-          <q-btn
-            label="reset"
-            flat
-            color="red"
-            class="q-ml-sm"
-            @click="resetStep()"
-          />
-        </q-stepper-navigation>
-      </template>
-    </q-stepper>
+        <q-step
+          v-for="(step, idx) in steps"
+          :key="`step_${idx}`"
+          :name="idx"
+          :title="step['title']"
+          :icon="step['icon'] ?? 'question_mark'"
+          :done="curStep > idx"
+        >
+          <component
+            :is="step['component']"
+            :data="step['data']"
+            :key="stepKey"
+            @update="updateData($event, step['label'])"
+          ></component>
+        </q-step>
+        <template #navigation>
+          <q-stepper-navigation>
+            <q-btn
+              type="submit"
+              color="primary"
+              :label="isFinalStep ? 'Submit' : 'Continue'"
+            />
+            <q-btn
+              v-if="curStep > 0"
+              flat
+              color="primary"
+              @click="backStep"
+              label="Back"
+              class="q-ml-sm"
+            />
+            <q-btn
+              label="reset"
+              type="reset"
+              flat
+              color="red"
+              class="q-ml-sm"
+            />
+          </q-stepper-navigation>
+        </template> </q-stepper
+    ></q-form>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount, reactive, nextTick } from 'vue';
+import {
+  ref,
+  computed,
+  onMounted,
+  onBeforeUnmount,
+  reactive,
+  nextTick,
+} from 'vue';
 import { useModelLayerStore } from '../stores/model-layer-store';
 import { uid, useQuasar } from 'quasar';
 import LayerBuild from '../components/ml/LayerBuild.vue';
 import FileUploader from '../components/FileUploader.vue';
-import EnvSetting from '../components/ml/envSetting.vue';
+import EnvSetting from '../components/ml/EnvSetting.vue';
 import FinalConfirm from '../components/ml/FinalConfirm.vue';
 import { isValidKey } from '../utils/utils';
 import _ from 'lodash';

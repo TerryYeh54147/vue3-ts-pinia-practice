@@ -5,6 +5,7 @@
         v-model="setting.framework"
         :options="options.framework"
         label="framework"
+        :rules="[isRequired]"
         dense
       />
     </div>
@@ -17,14 +18,15 @@
 <script setup lang="ts">
 import { reactive, PropType, onDeactivated } from 'vue';
 import _ from 'lodash';
-import { EnvSetting } from '../../models/model';
+import { EnvSetup } from '../../models/model';
+import { isRequired } from '../../utils/rules';
 
 const props = defineProps({
-  data: Object as PropType<EnvSetting>,
+  data: Object as PropType<EnvSetup>,
 });
 
-// let setting = reactive<EnvSetting>({ framework: '', isPretrained: false });
-const setting = reactive<EnvSetting>(_.cloneDeep(props.data) as EnvSetting);
+// let setting = reactive<EnvSetup>({ framework: '', isPretrained: false });
+const setting = reactive<EnvSetup>(_.cloneDeep(props.data) as EnvSetup);
 const options = {
   framework: ['Tensorflow & Keras'],
 };
