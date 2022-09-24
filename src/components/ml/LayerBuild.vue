@@ -1,6 +1,6 @@
 <template>
   <div class="row q-col-gutter-md items-stretch">
-    <div v-for="(layer, idx) in layers" :key="`Layer_${idx}`" class="col-6">
+    <div v-for="(layer, idx) in layers" :key="`Layer_${layer.id}`" class="col-6">
       <LayerCard
         :title="`Layer${idx}`"
         :data="layer"
@@ -28,11 +28,9 @@ let layers = reactive<Array<Layer>>(
   _.cloneDeep(props.data) as unknown as Array<Layer>
 );
 
-let globalCnt = ref(0);
-
 const getNextId = () => {
-  globalCnt.value++;
-  return globalCnt.value.toString();
+  const timeStamp = new Date().getTime().toString();
+  return timeStamp;
 };
 
 const add = () => {
