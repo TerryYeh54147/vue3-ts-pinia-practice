@@ -53,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount, reactive } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount, reactive, nextTick } from 'vue';
 import { useModelLayerStore } from '../stores/model-layer-store';
 import { uid, useQuasar } from 'quasar';
 import LayerBuild from '../components/ml/LayerBuild.vue';
@@ -135,7 +135,7 @@ const nextStep = () => {
 };
 
 const backStep = () => {
-  if (curStep.value>0){
+  if (curStep.value > 0) {
     curStep.value -= 1;
   }
 };
@@ -143,15 +143,17 @@ const backStep = () => {
 let stepKey = ref(0);
 const resetStep = () => {
   stepKey.value++;
-  steps.forEach((e) => {
-    if (isValidKey(e.label, modelLayerStore.modelLayerDefaultInputed)) {
-      e.data = modelLayerStore.modelLayerDefaultInputed[e.label];
-    }
+  nextTick(() => {
+    curStep.value = 0;
+    steps.forEach((e) => {
+      if (isValidKey(e.label, modelLayerStore.modelLayerDefaultInputed)) {
+        e.data = modelLayerStore.modelLayerDefaultInputed[e.label];
+      }
+    });
+    modelLayerStore.syncLayerModelLayerInputed(
+      modelLayerStore.modelLayerDefaultInputed
+    );
   });
-  modelLayerStore.syncLayerModelLayerInputed(
-    modelLayerStore.modelLayerDefaultInputed
-  );
-  curStep.value = 0;
 };
 
 const submit = () => {
