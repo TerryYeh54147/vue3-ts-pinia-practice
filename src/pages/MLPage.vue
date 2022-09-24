@@ -35,7 +35,7 @@
             v-if="curStep > 0"
             flat
             color="primary"
-            @click="curStep -= 1"
+            @click="backStep"
             label="Back"
             class="q-ml-sm"
           />
@@ -133,6 +133,13 @@ const nextStep = () => {
     steps[steps.length - 1].data = _.cloneDeep(selectedData.value);
   }
 };
+
+const backStep = () => {
+  if (curStep.value>0){
+    curStep.value -= 1;
+  }
+};
+
 let stepKey = ref(0);
 const resetStep = () => {
   stepKey.value++;
