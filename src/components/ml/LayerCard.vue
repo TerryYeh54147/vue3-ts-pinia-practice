@@ -20,6 +20,7 @@
             label="class"
             :options="Object.keys(kerasAPI)"
             :rules="[isRequired]"
+            lazy-rules
             clearable
             @update:model-value="update('class')"
           />

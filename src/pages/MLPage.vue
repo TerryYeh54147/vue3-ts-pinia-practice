@@ -152,7 +152,6 @@ let stepKey = ref(0);
 const resetStep = () => {
   stepKey.value++;
   nextTick(() => {
-    curStep.value = 0;
     steps.forEach((e) => {
       if (isValidKey(e.label, modelLayerStore.modelLayerDefaultInputed)) {
         e.data = modelLayerStore.modelLayerDefaultInputed[e.label];
@@ -161,6 +160,7 @@ const resetStep = () => {
     modelLayerStore.syncLayerModelLayerInputed(
       modelLayerStore.modelLayerDefaultInputed
     );
+    curStep.value = 0;
   });
 };
 

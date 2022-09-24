@@ -6,7 +6,10 @@
         :options="options.framework"
         label="framework"
         :rules="[isRequired]"
+        lazy-rules
         dense
+        clearable
+        @change="updateData"
       />
     </div>
     <div class="col-12 col-md-6">
@@ -32,6 +35,9 @@ const options = {
 };
 
 const emit = defineEmits(['update']);
+const updateData = () => {
+  emit('update', setting);
+}
 onDeactivated(() => {
   console.log('onDeactivated');
   emit('update', setting);
