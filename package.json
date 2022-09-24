@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@braks/vue-flow": "^0.4.40",
     "@types/lodash": "^4.14.185"
   }
 }
