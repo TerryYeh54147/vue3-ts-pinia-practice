@@ -1,3 +1,5 @@
+import type { Node, Edge } from '@braks/vue-flow'
+
 export enum InputType {
   'select',
   'text',
@@ -7,6 +9,12 @@ export interface EnvSetup {
   framework: string;
   isPretrained: boolean;
 }
+
+export interface ModelLayer extends Node {
+  data: Layer;
+}
+
+export declare type ModelElement = ModelLayer | Edge;
 
 export interface Layer {
   id: string,

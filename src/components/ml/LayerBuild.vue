@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onDeactivated } from 'vue';
+import { reactive, onDeactivated } from 'vue';
 import LayerCard from './LayerCard.vue';
 import { Layer } from '../../models/model';
 import _ from 'lodash';

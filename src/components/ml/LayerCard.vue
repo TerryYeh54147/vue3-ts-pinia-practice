@@ -1,10 +1,10 @@
 <template>
-  <q-card>
+  <q-card class="layerCard">
     <q-card-section>
       <div class="row q-col-qutter-md">
         <div class="col-11">
           <div class="text-h6 text-blod">
-            {{ title }}
+            {{ isInputType? 'Input Layer': title }}
           </div>
         </div>
         <div class="col-1">
@@ -63,6 +63,19 @@
       </div>
     </q-card-section>
   </q-card>
+  <Handle
+    v-if="!isInputType"
+    id="sourceEdge"
+    type="source"
+    :position="Position.Top"
+    :style="sourceHandleStyle"
+  />
+  <Handle
+    id="targetEdge"
+    type="target"
+    :position="Position.Bottom"
+    :style="targetHandleStyle"
+  />
 </template>
 
 <script setup lang="ts">
@@ -72,16 +85,22 @@ import { useModelLayerStore } from '../../stores/model-layer-store';
 import { isValidKey } from '../../utils/utils';
 import { InputType, Layer } from '../../models/model';
 import { isRequired } from '../../utils/rules';
+import { Handle, Position } from '@braks/vue-flow';
 
 const modelLayerStore = useModelLayerStore();
 
 const props = defineProps({
   title: String,
   data: Object as PropType<Layer>,
+  type: String,
 });
 
 const emit = defineEmits(['del', 'update']);
 const layer = computed(() => props.data);
+
+const isInputType = computed(() => {
+  return props.type === 'input';
+});
 
 const kerasAPI = modelLayerStore.kerasAPI;
 const kerasAPIOtions = modelLayerStore.kerasAPIOtions;
@@ -98,4 +117,22 @@ const del = () => {
   console.log(`=== delete ${layer.value?.id} ===`);
   emit('del', layer.value?.id);
 };
+
+const sourceHandleStyle = computed(() => ({
+  filter: 'invert(100%)',
+  top: '-3px',
+  bottom: 'auto',
+}));
+const targetHandleStyle = computed(() => ({
+  filter: 'invert(100%)',
+  top: 'auto',
+  bottom: '-3px',
+}));
 </script>
+
+<style scoped lang="scss">
+.layerCard {
+  min-width: 300px;
+  width: 500px;
+}
+</style>
