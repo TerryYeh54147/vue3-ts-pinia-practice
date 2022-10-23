@@ -85,7 +85,7 @@ import { useModelLayerStore } from '../../stores/model-layer-store';
 import { isValidKey } from '../../utils/utils';
 import { InputType, Layer } from '../../models/model';
 import { isRequired } from '../../utils/rules';
-import { Handle, Position } from '@braks/vue-flow';
+import { Handle, Position } from '@vue-flow/core';
 
 const modelLayerStore = useModelLayerStore();
 

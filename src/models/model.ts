@@ -1,4 +1,4 @@
-import type { Node, Edge } from '@braks/vue-flow'
+import type { Node, Edge } from '@vue-flow/core'
 
 export enum InputType {
   'select',

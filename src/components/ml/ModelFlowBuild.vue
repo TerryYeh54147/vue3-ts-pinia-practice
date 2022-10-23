@@ -24,8 +24,9 @@
 </template>
 
 <script setup lang="ts">
-import { Background, MiniMap, VueFlow, useVueFlow } from '@braks/vue-flow';
-import type { Element } from '@braks/vue-flow';
+import { VueFlow, useVueFlow } from '@vue-flow/core';
+import { Background, MiniMap } from '@vue-flow/additional-components';
+import type { Element } from '@vue-flow/core';
 
 import { ref } from 'vue';
 import { uid } from 'quasar';
@@ -153,5 +154,4 @@ function add() {
   transform: scale(75%);
   transform-origin: bottom right;
 }
-
 </style>
