@@ -5,6 +5,7 @@
       @submit="isFinalStep ? submit() : nextStep()"
       @reset="resetStep"
       no-reset-focus
+      :key="formKey"
     >
       <q-stepper
         v-model="curStep"
@@ -59,13 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ref,
-  computed,
-  onMounted,
-  onBeforeUnmount,
-  reactive,
-} from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount, reactive } from 'vue';
 import { useModelLayerStore } from '../stores/model-layer-store';
 import { uid, useQuasar } from 'quasar';
 // import LayerBuild from '../components/ml/LayerBuild.vue';
@@ -141,6 +136,7 @@ const updateData = (data, label: string) => {
 };
 
 const stepperForm = ref(null);
+let formKey = ref(0);
 
 const nextStep = () => {
   curStep.value += 1;
@@ -179,6 +175,7 @@ const submit = () => {
   modelLayerStore.syncLayerModelLayerInputed(selectedData.value);
   console.log(JSON.stringify(selectedData.value));
   resetStep();
+  formKey.value++;
 };
 
 onBeforeUnmount(() => {
