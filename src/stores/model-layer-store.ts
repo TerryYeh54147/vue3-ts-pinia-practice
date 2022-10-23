@@ -6,14 +6,14 @@ export const useModelLayerStore = defineStore('modelLayer', {
   state: () => ({
     modelLayerDefaultInputed: {
       uid: '',
-      envSetting: { framework: '', isPretrained: false },
       file: null,
+      envSetting: { framework: '', isPretrained: false },
       modelLayer: [],
     },
     modelLayerInputed: {
       uid: '',
-      envSetting: { framework: '', isPretrained: false },
       file: null,
+      envSetting: { framework: '', isPretrained: false },
       modelLayer: [] as Array<Layer>,
     },
     kerasAPI: {

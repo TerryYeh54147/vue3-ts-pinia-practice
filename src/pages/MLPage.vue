@@ -1,6 +1,11 @@
 <template>
   <q-page padding>
-    <q-form @submit="isFinalStep ? submit() : nextStep()" @reset="resetStep">
+    <q-form
+      ref="stepperForm"
+      @submit="isFinalStep ? submit() : nextStep()"
+      @reset="resetStep"
+      no-reset-focus
+    >
       <q-stepper
         v-model="curStep"
         ref="stepper"
@@ -60,7 +65,6 @@ import {
   onMounted,
   onBeforeUnmount,
   reactive,
-  nextTick,
 } from 'vue';
 import { useModelLayerStore } from '../stores/model-layer-store';
 import { uid, useQuasar } from 'quasar';
@@ -86,18 +90,18 @@ const modelLayerStore = useModelLayerStore();
 const isFinalStep = computed(() => curStep.value === steps.length - 1);
 const steps = reactive<Array<Stepper>>([
   {
-    label: 'envSetting',
-    title: '環境設定',
-    icon: 'settings_applications',
-    component: EnvSetting,
-    data: _.cloneDeep(modelLayerStore.modelLayerInputed.envSetting),
-  },
-  {
     label: 'file',
     title: '檔案上傳',
     icon: 'upload',
     component: FileUploader,
     data: _.cloneDeep(modelLayerStore.modelLayerInputed.file),
+  },
+  {
+    label: 'envSetting',
+    title: '環境設定',
+    icon: 'settings_applications',
+    component: EnvSetting,
+    data: _.cloneDeep(modelLayerStore.modelLayerInputed.envSetting),
   },
   {
     label: 'modelLayer',
@@ -118,8 +122,8 @@ const steps = reactive<Array<Stepper>>([
 const selectedData = computed(() => {
   return {
     uid: modelLayerStore.modelLayerInputed.uid,
-    envSetting: steps[0].data,
-    file: steps[1].data,
+    file: steps[0].data,
+    envSetting: steps[1].data,
     modelLayer: steps[2].data,
   };
 });
@@ -136,6 +140,8 @@ const updateData = (data, label: string) => {
   }
 };
 
+const stepperForm = ref(null);
+
 const nextStep = () => {
   curStep.value += 1;
   console.log(isFinalStep.value);
@@ -145,25 +151,28 @@ const nextStep = () => {
 };
 
 const backStep = () => {
-  if (curStep.value > 0) {
-    curStep.value -= 1;
-  }
+  stepperForm.value.validate().then((pass: boolean) => {
+    if (pass && curStep.value > 0) {
+      curStep.value -= 1;
+    } else {
+      const errMsg = !pass ? 'validation failed' : 'something wrong';
+      console.error(errMsg);
+    }
+  });
 };
 
 let stepKey = ref(0);
 const resetStep = () => {
-  stepKey.value++;
-  nextTick(() => {
-    steps.forEach((e) => {
-      if (isValidKey(e.label, modelLayerStore.modelLayerDefaultInputed)) {
-        e.data = modelLayerStore.modelLayerDefaultInputed[e.label];
-      }
-    });
-    modelLayerStore.syncLayerModelLayerInputed(
-      modelLayerStore.modelLayerDefaultInputed
-    );
-    curStep.value = 0;
+  steps.forEach((e) => {
+    if (isValidKey(e.label, modelLayerStore.modelLayerDefaultInputed)) {
+      e.data = modelLayerStore.modelLayerDefaultInputed[e.label];
+    }
   });
+  modelLayerStore.syncLayerModelLayerInputed(
+    modelLayerStore.modelLayerDefaultInputed
+  );
+  curStep.value = 0;
+  stepKey.value++;
 };
 
 const submit = () => {
