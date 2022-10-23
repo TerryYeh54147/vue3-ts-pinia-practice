@@ -1,5 +1,10 @@
 <template>
-  <VueFlow v-model="elements" :default-zoom="1.5" :min-zoom="0.2" :max-zoom="4">
+  <VueFlow
+    v-model="elements"
+    snap-to-grid
+    elevate-edges-on-select
+    class="vueflow"
+  >
     <template #node-custom="props">
       <LayerCard
         :key="props.id"
@@ -12,48 +17,35 @@
     </template>
     <Background />
     <MiniMap />
-    <Controls />
-    <q-page-sticky
-      position="top-right"
-      :offset="[18, 10]"
-      class="pageStickyBtn"
-    >
+    <div class="controls">
       <q-btn round color="secondary" icon="add" @click="add" />
-    </q-page-sticky>
+    </div>
   </VueFlow>
 </template>
 
 <script setup lang="ts">
-import {
-  Background,
-  Controls,
-  MiniMap,
-  VueFlow,
-  isNode,
-  useVueFlow,
-} from '@braks/vue-flow';
+import { Background, MiniMap, VueFlow, useVueFlow } from '@braks/vue-flow';
 import type { Element } from '@braks/vue-flow';
 
 import { ref } from 'vue';
+import { uid } from 'quasar';
 import LayerCard from './LayerCard.vue';
 import _ from 'lodash';
-
 /**
  * useVueFlow provides all event handlers and store properties
  * You can pass the composable an object that has the same properties as the VueFlow component props
  */
-const {
-  onPaneReady,
-  onNodeDragStop,
-  onConnect,
-  addEdges,
-  setTransform,
-  toObject,
-} = useVueFlow();
+const vueflowConfig = {
+  defaultZoom: 0.5,
+  minZoom: 0.4,
+  maxZoom: 5,
+};
+
+const { onPaneReady, onNodeDragStop, onConnect, addEdges } =
+  useVueFlow(vueflowConfig);
 
 const getType = (id: string) => {
   const idx = elements.value.findIndex((e) => e.id === id);
-  console.log(`${id}: idx: ${idx}`);
   const type = idx === 0 ? 'input' : 'others';
   return type;
 };
@@ -88,38 +80,11 @@ onNodeDragStop((e) => console.log('drag stop', e));
  * onConnect is called when a new connection is created.
  * You can add additional properties to your new edge (like a type or label) or block the creation altogether
  */
-onConnect((params) => addEdges([params]));
-
-const dark = ref(false);
-
-/**
- * To update node properties you can simply use your elements v-model and mutate the elements directly
- * Changes should always be reflected on the graph reactively, without the need to overwrite the elements
- */
-const updatePos = () =>
-  elements.value.forEach((el) => {
-    if (isNode(el)) {
-      el.position = {
-        x: Math.random() * 400,
-        y: Math.random() * 400,
-      };
-    }
-  });
-
-/**
- * toObject transforms your current graph data to an easily persist-able object
- */
-const logToObject = () => console.log(toObject());
-
-/**
- * Resets the current viewpane transformation (zoom & pan)
- */
-const resetTransform = () => setTransform({ x: 0, y: 0, zoom: 1 });
-
-const toggleClass = () => {
-  dark.value = !dark.value;
-  elements.value.forEach((el) => (el.class = dark.value ? 'dark' : 'light'));
-};
+onConnect((params) => {
+  console.log('onConnect');
+  console.log(params);
+  addEdges([params]);
+});
 
 const emit = defineEmits(['update']);
 
@@ -137,7 +102,8 @@ function delLayer(id: string) {
 }
 
 const getNextId = () => {
-  const timeStamp = new Date().getTime().toString();
+  const id = uid();
+  const timeStamp = new Date().getTime().toString() + `_${id}`;
   return timeStamp;
 };
 
@@ -159,10 +125,33 @@ function add() {
 </script>
 
 <style lang="scss" scoped>
-@import 'https://cdn.jsdelivr.net/npm/@braks/vue-flow@0.4.40/dist/style.css';
-@import 'https://cdn.jsdelivr.net/npm/@braks/vue-flow@0.4.40/dist/theme-default.css';
+@import 'https://cdn.jsdelivr.net/npm/@vue-flow/core@1.2.0/dist/style.css';
+@import 'https://cdn.jsdelivr.net/npm/@vue-flow/core@1.2.0/dist/theme-default.css';
 
-.pageStickyBtn {
-  z-index: 10;
+.vueflow {
+  height: calc(100vh - 52px - 244px);
+  .controls {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    z-index: 4;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+  button {
+    &:hover {
+      opacity: 0.8;
+      transform: scale(105%);
+      transition: 0.25s all ease;
+    }
+  }
 }
+
+.vue-flow__minimap {
+  transform: scale(75%);
+  transform-origin: bottom right;
+}
+
 </style>

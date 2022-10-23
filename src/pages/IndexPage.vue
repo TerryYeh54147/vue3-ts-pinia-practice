@@ -10,7 +10,7 @@
       </div> -->
     <!-- <div class="col"> -->
     <!-- <FileUploader /> -->
-    <model-flow-build class="fullHeight" />
+    <model-flow-build />
     <!-- </div>
     </div> -->
   </q-page>
@@ -50,9 +50,3 @@ const action = (val: boolean) => {
   console.log(`action: ${val}`);
 };
 </script>
-
-<style lang="scss" scoped>
-.fullHeight{
-  height: calc(100vh - 52px);
-}
-</style>

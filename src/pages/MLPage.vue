@@ -64,7 +64,8 @@ import {
 } from 'vue';
 import { useModelLayerStore } from '../stores/model-layer-store';
 import { uid, useQuasar } from 'quasar';
-import LayerBuild from '../components/ml/LayerBuild.vue';
+// import LayerBuild from '../components/ml/LayerBuild.vue';
+import ModelFlowBuild from '../components/ml/ModelFlowBuild.vue';
 import FileUploader from '../components/FileUploader.vue';
 import EnvSetting from '../components/ml/EnvSetting.vue';
 import FinalConfirm from '../components/ml/FinalConfirm.vue';
@@ -102,7 +103,8 @@ const steps = reactive<Array<Stepper>>([
     label: 'modelLayer',
     title: '建立模型',
     icon: 'model_training',
-    component: LayerBuild,
+    // component: LayerBuild,
+    component: ModelFlowBuild,
     data: _.cloneDeep(modelLayerStore.modelLayerInputed.modelLayer),
   },
   {
