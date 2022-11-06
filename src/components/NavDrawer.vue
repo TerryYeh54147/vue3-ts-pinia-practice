@@ -33,5 +33,10 @@ const drawerItems = reactive<Array<Drawer>>([
     path: '/',
     icon: 'home',
   },
+  {
+    title: 'Analysis Page',
+    path: '/analysis',
+    icon: 'insert_chart_outlined',
+  },
 ]);
 </script>
