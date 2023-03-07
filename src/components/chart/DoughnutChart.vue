@@ -1,6 +1,9 @@
 <template>
   <q-card>
-    <DoughnutChart v-bind="doughnutChartProps" />
+    <DoughnutChart
+      v-if="type === ChartType.doughnut"
+      v-bind="doughnutChartProps"
+    />
   </q-card>
 </template>
 
@@ -9,7 +12,7 @@ import { computed, defineProps, defineComponent, ref, inject } from 'vue';
 
 import { DoughnutChart, useDoughnutChart } from 'vue-chart-3';
 import { Chart, ChartData, ChartOptions, registerables } from 'chart.js';
-import { ChartComponetData } from '../../models/chart';
+import { ChartType, ChartComponetData } from '../../models/chart';
 
 Chart.register(...registerables);
 defineComponent(DoughnutChart);
@@ -17,10 +20,17 @@ defineComponent(DoughnutChart);
 // props
 const props = defineProps({
   title: { type: String, default: '' },
+  type: { type: String, default: ChartType.doughnut },
 });
 
+const typeIdx = Object.values(ChartType).indexOf(
+  props.type as unknown as ChartType
+);
+const chartTypeKey = Object.keys(ChartType)[typeIdx];
+console.log(chartTypeKey);
+
 // inject
-const a = inject('data', []) as Array<ChartComponetData>;
+const a = inject('chartData', []) as Array<ChartComponetData>;
 
 // data
 
@@ -47,7 +57,7 @@ const testData = computed<ChartData<'doughnut'>>(() => ({
 const options = computed<ChartOptions<'doughnut'>>(() => ({
   scales: {
     myScale: {
-      type: 'logarithmic',
+      type: 'category',
       position: 'left',
     },
   },

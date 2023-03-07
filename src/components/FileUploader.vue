@@ -30,18 +30,35 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, onDeactivated } from 'vue';
+import { reactive, ref, onDeactivated, inject } from 'vue';
 import _ from 'lodash';
 import { PreviewTableHeader } from '../models/file-upload';
+import { LineChartData } from '../models/chart';
+import { getRandomColor } from '../utils/util';
 
+// props
 const props = defineProps({
   data: null,
 });
 
+// inject
+let chartData = inject('chartData', [] as Array<LineChartData>);
+
+// data
 // const file = ref(null);
 const file = ref(_.cloneDeep(props.data));
 let isLoading = ref(false);
 let fileName = ref('');
+
+let needPreview = ref(false);
+const paginationSetup = {
+  rowsPerPage: 10,
+};
+
+let previewHeaders = reactive<Array<PreviewTableHeader>>([]);
+let previewData = reactive([] as Array<Record<string, string | number>>);
+
+// function
 const previewFile = () => {
   initialPreviewData();
   const reader = new FileReader();
@@ -60,12 +77,7 @@ const previewFile = () => {
     isLoading.value = false;
   };
 };
-let needPreview = ref(false);
-const paginationSetup = {
-  rowsPerPage: 10,
-};
-let previewHeaders = reactive<Array<PreviewTableHeader>>([]);
-let previewData = reactive([]);
+
 const txtToTableData = (txt: string) => {
   const stringRows = txt.split('\n');
   const firstRow = stringRows.shift() as string;
@@ -89,7 +101,10 @@ const setTableHeader = (txt: string, header: Array<PreviewTableHeader>) => {
     return res;
   }, header);
 };
-const setTableData = (stringRows: Array<string>, dataset: never[]) => {
+const setTableData = (
+  stringRows: Array<string>,
+  dataset: Array<Record<string, string | number>>
+) => {
   stringRows.reduce((res, str: string) => {
     if (str.length > 0) {
       const rowData = str.trim().split(',');
@@ -109,6 +124,27 @@ const setTableData = (stringRows: Array<string>, dataset: never[]) => {
     }
     return res;
   }, dataset);
+  chartData = getChartData(previewData);
+  console.log('=== file uploader ===');
+  console.log(chartData);
+};
+
+const getChartData = (data: Array<Record<string, string | number>>) => {
+  console.log(data);
+  const labels = previewHeaders.map((e) => e.name);
+  const dataList = labels.reduce((res: Array<LineChartData>, k: string) => {
+    const newItem = {} as LineChartData;
+    newItem.label = k;
+    newItem.data = data.map((e) => e[k]);
+    newItem.borderColor = getRandomColor();
+    newItem.fill = true;
+    res.push(newItem);
+    return res;
+  }, [] as Array<LineChartData>);
+
+  console.log(labels);
+  console.log(dataList);
+  return dataList;
 };
 
 const emit = defineEmits(['update']);
